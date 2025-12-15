@@ -10,8 +10,8 @@
 
     <Grid>
         <MediaPlayerElement x:Name="mediaPlayer" AutoPlay="False" Visibility="Collapsed"/>
-        <Pivot Title="Музыка" Foreground="White">
-            <PivotItem Header="Треки">
+        <Pivot Title="Медиатека" Foreground="White">
+            <PivotItem Header="Треки" FontSize="23">
                 <ListView x:Name="TracksList" ItemClick="Track_ItemClick" IsItemClickEnabled="True">
                     <ListView.ItemTemplate>
                         <DataTemplate>

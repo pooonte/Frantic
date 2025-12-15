@@ -9,6 +9,13 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <TextBlock Text="Видео" FontSize="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Pivot Title="Видеотека">
+            <PivotItem Header="Галерея видео">
+                <!--<GridView x:Name="VideoGallery" ItemClick="GalleryVideo_Click" IsItemClickEnabled="True"/>-->
+            </PivotItem>
+            <PivotItem Header="Папки">
+                <!--<GridView x:Name="Folders" ItemClick="FoldersVideo_Click" IsItemClickEnabled="true"/>-->
+            </PivotItem>
+        </Pivot>
     </Grid>
 </Page>

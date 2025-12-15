@@ -9,6 +9,21 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <TextBlock Text="Фото" FontSize="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Pivot Title="Фототека">
+            <PivotItem Header="Галерея фото">
+                <ListView ItemClick="GalleryPhoto_Click" IsItemClickEnabled="True">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding DisplayName}" Foreground="White"/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </PivotItem>
+            <PivotItem Header="Папки">
+                <!--<GridView x:Name="Folders" ItemClick="FoldersPhoto_Click" IsItemClickEnabled="true"/>-->
+            </PivotItem>
+        </Pivot>
+        
     </Grid>
 </Page>
+<!--x:Name="PhotoGallery"-->
