@@ -9,6 +9,28 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-
+        <SplitView x:Name="MyPane" DisplayMode="Overlay" PanePlacement="Right" Background="Transparent">
+            <SplitView.Pane>
+                <StackPanel Padding="20,15,0,0" Background="#DC572E">
+                    <TextBlock Text="Панель навигации" FontSize="22" VerticalAlignment="Stretch"/>
+                    <Button Content="Музыка" Tag="tracks" Click="NavButton_Click" Foreground="White" HorizontalAlignment="Left" FontSize="18" Background="Transparent" BorderThickness="0" Padding="8" Margin="15,15,0,0"/>
+                    <Button Content="Видео" Tag="video" Click="NavButton_Click" Foreground="White" HorizontalAlignment="Left" FontSize="18" Background="Transparent" BorderThickness="0" Padding="8" Margin="15,0,0,0"/>
+                    <Button Content="Фото" Tag="photo" Click="NavButton_Click" Foreground="White" HorizontalAlignment="Left" FontSize="18" Background="Transparent" BorderThickness="0" Padding="8" Margin="15,0,0,0"/>
+                </StackPanel>
+            </SplitView.Pane>
+            <Frame x:Name="ContentFrame"/>
+        </SplitView>
+    <Button                 
+                Content="☰"
+                FontSize="24"
+                Background="Transparent"
+                BorderBrush="Transparent"
+                Foreground="White"
+                Width="48"
+                Height="48"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Margin="8"
+                Click="Button_Click"/>
     </Grid>
 </Page>

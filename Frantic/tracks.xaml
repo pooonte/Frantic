@@ -1,0 +1,49 @@
+﻿<Page
+    x:Class="Frantic.tracks"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Frantic"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <MediaPlayerElement x:Name="mediaPlayer" AutoPlay="False" Visibility="Collapsed"/>
+        <Pivot Title="Музыка" Foreground="White">
+            <PivotItem Header="Треки">
+                <ListView x:Name="TracksList" ItemClick="Track_ItemClick" IsItemClickEnabled="True">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding DisplayName}" Foreground="White"/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </PivotItem>
+            <PivotItem Header="Альбомы">
+                <GridView x:Name="AlbumsGrid" ItemClick="Album_ItemClick" IsItemClickEnabled="True" />
+            </PivotItem>
+            <PivotItem Header="Исполнители">
+                <ListView x:Name="ArtistsList" ItemClick="Artist_ItemClick" IsItemClickEnabled="True" />
+            </PivotItem>
+        </Pivot>
+        <Grid x:Name="PlayerPanel"
+              VerticalAlignment="Bottom"
+              Background="#FF2D2D2D"
+              Height="60"
+              Visibility="Collapsed">
+            <StackPanel Orientation="Horizontal" Margin="12,0">
+                <Image x:Name="MiniAlbumArt" Width="40" Height="40" Stretch="UniformToFill" />
+                <StackPanel Margin="12,0,0,0">
+                    <TextBlock x:Name="MiniTrackTitle" Text="Трек" Foreground="White" FontSize="14" />
+                    <TextBlock x:Name="MiniTrackArtist" Text="Исполнитель" Foreground="Gray" FontSize="12" />
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,12,0">
+                <Button Content="⏮" Tag="Prev" Click="MediaButton_Click" Width="40" Height="40" Background="Transparent" Foreground="White" />
+                <Button x:Name="MiniPlayButton" Content="▶" Tag="PlayPause" Click="MediaButton_Click" Width="40" Height="40" Background="Transparent" Foreground="White" />
+                <Button Content="⏭" Tag="Next" Click="MediaButton_Click" Width="40" Height="40" Background="Transparent" Foreground="White" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Page>
