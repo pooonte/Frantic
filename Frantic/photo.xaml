@@ -11,19 +11,26 @@
     <Grid>
         <Pivot Title="Фототека">
             <PivotItem Header="Галерея фото">
-                <ListView ItemClick="GalleryPhoto_Click" IsItemClickEnabled="True">
+                <ListView x:Name="PhotoList" ItemClick="GalleryPhoto_Click" IsItemClickEnabled="True">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding DisplayName}" Foreground="White"/>
+                            <Image Source="{Binding Thumbnail}" Width="150" Height="150" Stretch="UniformToFill" Margin="4"/>
                         </DataTemplate>
                     </ListView.ItemTemplate>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="GridViewItem">
+                            <Setter Property="Margin" Value="8"/>
+                            <Setter Property="Padding" Value="8"/>
+                            <Setter Property="Background" Value="8"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
                 </ListView>
             </PivotItem>
             <PivotItem Header="Папки">
                 <!--<GridView x:Name="Folders" ItemClick="FoldersPhoto_Click" IsItemClickEnabled="true"/>-->
             </PivotItem>
         </Pivot>
-        
+        <Frame x:Name="ContentFrame"/>
     </Grid>
 </Page>
 <!--x:Name="PhotoGallery"-->
