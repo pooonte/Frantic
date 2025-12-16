@@ -1,0 +1,15 @@
+﻿<Page
+    x:Class="Frantic.VideoViewPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="Black">
+
+    <Grid>
+        <MediaElement x:Name="VideoPlayer"
+                      AreTransportControlsEnabled="True"
+                      AutoPlay="True"
+                      Stretch="Uniform"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"/>
+    </Grid>
+</Page>

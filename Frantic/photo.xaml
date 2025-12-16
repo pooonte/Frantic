@@ -11,7 +11,7 @@
     <Grid>
         <Pivot Title="Фототека">
             <PivotItem Header="Галерея фото">
-                <GridView x:Name="PhotoList" ItemClick="GalleryPhoto_Click" IsItemClickEnabled="True">
+                <GridView x:Name="PhotoList" ItemClick="GalleryPhoto_Click" IsItemClickEnabled="True" HorizontalAlignment="Stretch" Margin="1,0,-1,0" VerticalAlignment="Stretch">
                     <GridView.ItemTemplate>
                         <DataTemplate>
                             <Image Source="{Binding Thumbnail}" Width="70" Height="70" Stretch="UniformToFill" Margin="6"/>

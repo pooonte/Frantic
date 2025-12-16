@@ -1,0 +1,70 @@
+﻿<Page
+    x:Class="Frantic.PlayerViewPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="Black">
+
+    <Grid>
+        <Image x:Name="AlbumArt"
+               Width="250"
+               Height="250"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Top"
+               Margin="0,100,0,0"/>
+
+        <StackPanel HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Margin="0,370,0,0">
+            <TextBlock x:Name="TrackTitle"
+                       Text="Загрузка..."
+                       FontSize="24"
+                       Foreground="White"
+                       TextAlignment="Center"
+                       MaxWidth="300"
+                       TextWrapping="Wrap"/>
+            <TextBlock x:Name="TrackArtist"
+                       Text="Исполнитель"
+                       FontSize="18"
+                       Foreground="Gray"
+                       TextAlignment="Center"
+                       MaxWidth="300"
+                       TextWrapping="Wrap"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,0,100">
+            <Button x:Name="PrevButton"
+                    Content="⏮"
+                    FontSize="24"
+                    Background="Transparent"
+                    Foreground="White"
+                    Click="MediaButton_Click"
+                    Tag="Prev"
+                    Margin="0,0,20,0"
+                    FontFamily="Segoe UI Symbol"/>
+            <Button x:Name="PlayPauseButton"
+                    Content="⏸"
+                    FontSize="24"
+                    Background="Transparent"
+                    Foreground="White"
+                    Click="MediaButton_Click"
+                    Tag="PlayPause"
+                    FontFamily="Segoe UI Symbol"/>
+            <Button x:Name="NextButton"
+                    Content="⏭"
+                    FontSize="24"
+                    Background="Transparent"
+                    Foreground="White"
+                    Click="MediaButton_Click"
+                    Tag="Next"
+                    Margin="20,0,0,0"
+                    FontFamily="Segoe UI Symbol"/>
+        </StackPanel>
+
+        <MediaPlayerElement x:Name="mediaPlayer"
+                            AutoPlay="False"
+                            Visibility="Collapsed"/>
+    </Grid>
+</Page>

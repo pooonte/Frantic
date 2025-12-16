@@ -9,7 +9,6 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <MediaPlayerElement x:Name="mediaPlayer" AutoPlay="False" Visibility="Collapsed"/>
         <Pivot Title="Медиатека" Foreground="White">
             <PivotItem Header="Треки" FontSize="23">
                 <ListView x:Name="TracksList" ItemClick="Track_ItemClick" IsItemClickEnabled="True">
@@ -27,22 +26,77 @@
                 <ListView x:Name="ArtistsList" ItemClick="Artist_ItemClick" IsItemClickEnabled="True" />
             </PivotItem>
         </Pivot>
-        <Grid x:Name="PlayerPanel"
-              VerticalAlignment="Bottom"
-              Background="#FF2D2D2D"
-              Height="60"
-              Visibility="Collapsed">
-            <StackPanel Orientation="Horizontal" Margin="12,0">
-                <Image x:Name="MiniAlbumArt" Width="40" Height="40" Stretch="UniformToFill" />
-                <StackPanel Margin="12,0,0,0">
-                    <TextBlock x:Name="MiniTrackTitle" Text="Трек" Foreground="White" FontSize="14" />
-                    <TextBlock x:Name="MiniTrackArtist" Text="Исполнитель" Foreground="Gray" FontSize="12" />
+
+        <MediaPlayerElement x:Name="mediaPlayer" AutoPlay="False" Visibility="Collapsed"/>
+
+        <Grid x:Name="MiniPlayerPanel"
+      VerticalAlignment="Bottom"
+      Background="#222"
+      Height="60"
+      Visibility="Collapsed"
+      Tapped="PlayerPanel_Tapped">
+
+            <Button x:Name="OpenPlayerButton"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Stretch"
+            Background="Transparent"
+            BorderThickness="0"
+            Click="OpenPlayerButton_Click">
+                <StackPanel Orientation="Horizontal" Margin="12,0">
+                    <Image x:Name="MiniAlbumArt" Width="40" Height="40" Stretch="UniformToFill"/>
+                    <StackPanel Margin="10,0,0,0" VerticalAlignment="Center">
+                        <TextBlock x:Name="MiniTrackTitle" Foreground="White" FontSize="14" MaxWidth="150" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock x:Name="MiniTrackArtist" Foreground="Gray" FontSize="12" MaxWidth="150" TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,12,0">
-                <Button Content="⏮" Tag="Prev" Click="MediaButton_Click" Width="40" Height="40" Background="Transparent" Foreground="White" />
-                <Button x:Name="MiniPlayButton" Content="▶" Tag="PlayPause" Click="MediaButton_Click" Width="40" Height="40" Background="Transparent" Foreground="White" />
-                <Button Content="⏭" Tag="Next" Click="MediaButton_Click" Width="40" Height="40" Background="Transparent" Foreground="White" />
+            </Button>
+
+            <Button x:Name="MiniPlayButton"
+            Content="▶"
+            FontSize="18"
+            Width="40"
+            Height="40"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center"
+            Margin="0,0,16,0"
+            Background="Transparent"
+            Foreground="White"
+            Click="MiniPlayButton_Click"/>
+        </Grid>
+
+        <Grid x:Name="FullPlayerPanel"
+          Background="Black"
+          Visibility="Collapsed" HorizontalAlignment="Stretch" Margin="1,0,-1,0" VerticalAlignment="Stretch">
+            <Image x:Name="FullAlbumArt"
+               Width="250"
+               Height="250"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Top"
+               Margin="0,100,0,0"/>
+            <TextBlock x:Name="FullTrackTitle"
+                   Foreground="White"
+                   FontSize="24"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Top"
+                   Margin="0,370,0,0"
+                   MaxWidth="300"
+                   TextWrapping="Wrap"/>
+            <TextBlock x:Name="FullTrackArtist"
+                   Foreground="Gray"
+                   FontSize="18"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Top"
+                   Margin="0,410,0,0"
+                   MaxWidth="300"
+                   TextWrapping="Wrap"/>
+
+            <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,0,100">
+                <Button Content="⏮" Tag="Prev" Click="MediaButton_Click" Background="Transparent" Foreground="White" FontSize="24" Margin="0,0,20,0"/>
+                <Button x:Name="FullPlayButton" Content="⏸" Tag="PlayPause" Click="MediaButton_Click" Background="Transparent" Foreground="White" FontSize="24"/>
+                <Button Content="⏭" Tag="Next" Click="MediaButton_Click" Background="Transparent" Foreground="White" FontSize="24" Margin="20,0,0,0"/>
             </StackPanel>
         </Grid>
     </Grid>

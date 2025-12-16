@@ -131,12 +131,18 @@
     <Compile Include="PhotoViewPage.xaml.cs">
       <DependentUpon>PhotoViewPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PlayerViewPage.xaml.cs">
+      <DependentUpon>PlayerViewPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="tracks.xaml.cs">
       <DependentUpon>tracks.xaml</DependentUpon>
     </Compile>
     <Compile Include="video.xaml.cs">
       <DependentUpon>video.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="VideoViewPage.xaml.cs">
+      <DependentUpon>VideoViewPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -176,11 +182,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="PlayerViewPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="tracks.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="video.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="VideoViewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

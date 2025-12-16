@@ -11,7 +11,23 @@
     <Grid>
         <Pivot Title="Видеотека">
             <PivotItem Header="Галерея видео">
-                <!--<GridView x:Name="VideoGallery" ItemClick="GalleryVideo_Click" IsItemClickEnabled="True"/>-->
+                <ListView x:Name="VideoList" ItemClick="GalleryVideo_Click" IsItemClickEnabled="True" Margin="1,0,-1,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding File.DisplayName}"
+                       FontSize="16"
+                       Foreground="White"
+                       Margin="12,8"/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
             </PivotItem>
             <PivotItem Header="Папки">
                 <!--<GridView x:Name="Folders" ItemClick="FoldersVideo_Click" IsItemClickEnabled="true"/>-->
