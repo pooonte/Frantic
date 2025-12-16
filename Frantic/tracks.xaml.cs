@@ -13,7 +13,9 @@ namespace Frantic
     {
         private ObservableCollection<StorageFile> _tracks = new ObservableCollection<StorageFile>();
         private int _currentIndex = -1;
+        private StorageFile _currentFile;
         private bool _isFullPlayerOpen = false;
+        private bool _userIsSeeking = false;
 
         public tracks()
         {
@@ -32,10 +34,8 @@ namespace Frantic
                 });
                 var fileQuery = musicFolder.CreateFileQueryWithOptions(queryOptions);
                 var files = await fileQuery.GetFilesAsync();
-
                 foreach (var file in files)
                     _tracks.Add(file);
-
                 TracksList.ItemsSource = _tracks;
             }
             catch (Exception ex)
@@ -47,6 +47,7 @@ namespace Frantic
 
         private async void PlayTrack(StorageFile file)
         {
+            if (file == null) return;
             try
             {
                 var source = Windows.Media.Core.MediaSource.CreateFromStorageFile(file);
@@ -56,8 +57,20 @@ namespace Frantic
                 _currentFile = file;
                 MiniTrackTitle.Text = file.DisplayName;
                 MiniTrackArtist.Text = "Локальный трек";
+                FullTrackTitle.Text = file.DisplayName;
+                FullTrackArtist.Text = "Локальный трек";
 
-                // Загрузка обложки
+                try
+                {
+                    var props = await file.Properties.RetrievePropertiesAsync(
+                        new[] { "System.Music.Title", "System.Music.Artist" });
+                    if (props["System.Music.Title"] is string title && !string.IsNullOrWhiteSpace(title))
+                        MiniTrackTitle.Text = FullTrackTitle.Text = title;
+                    if (props["System.Music.Artist"] is string artist && !string.IsNullOrWhiteSpace(artist))
+                        MiniTrackArtist.Text = FullTrackArtist.Text = artist;
+                }
+                catch { }
+
                 try
                 {
                     var thumb = await file.GetThumbnailAsync(
@@ -66,34 +79,20 @@ namespace Frantic
                     {
                         var bitmap = new BitmapImage();
                         await bitmap.SetSourceAsync(thumb);
-                        MiniAlbumArt.Source = bitmap;
+                        MiniAlbumArt.Source = FullAlbumArt.Source = bitmap;
                     }
                 }
                 catch { }
 
                 MiniPlayerPanel.Visibility = Visibility.Visible;
                 UpdatePlayButtonState();
+                StartPositionTimer();
             }
             catch (Exception ex)
             {
                 await new Windows.UI.Popups.MessageDialog($"Ошибка: {ex.Message}").ShowAsync();
             }
         }
-        private void OpenPlayerButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (!_isFullPlayerOpen)
-            {
-                // Копируем данные в полноэкранный режим
-                FullTrackTitle.Text = MiniTrackTitle.Text;
-                FullTrackArtist.Text = MiniTrackArtist.Text;
-                FullAlbumArt.Source = MiniAlbumArt.Source;
-
-                FullPlayerPanel.Visibility = Visibility.Visible;
-                MiniPlayerPanel.Visibility = Visibility.Collapsed;
-                _isFullPlayerOpen = true;
-            }
-        }
-        private StorageFile _currentFile;
 
         private void Track_ItemClick(object sender, ItemClickEventArgs e)
         {
@@ -111,17 +110,7 @@ namespace Frantic
         {
             string content = (mediaPlayer.MediaPlayer.PlaybackSession.PlaybackState ==
                 Windows.Media.Playback.MediaPlaybackState.Playing) ? "⏸" : "▶";
-            MiniPlayButton.Content = content;
-            if (_isFullPlayerOpen)
-            {
-                var fullButton = FullPlayerPanel.FindName("FullPlayButton") as Button;
-                if (fullButton != null) fullButton.Content = content;
-            }
-        }
-
-        private void MiniPlayButton_Click(object sender, RoutedEventArgs e)
-        {
-            TogglePlayback();
+            MiniPlayButton.Content = FullPlayButton.Content = content;
         }
 
         private void TogglePlayback()
@@ -138,14 +127,15 @@ namespace Frantic
             UpdatePlayButtonState();
         }
 
-        private void PlayerPanel_Tapped(object sender, TappedRoutedEventArgs e)
+        private void MiniPlayButton_Click(object sender, RoutedEventArgs e)
+        {
+            TogglePlayback();
+        }
+
+        private void OpenPlayerButton_Click(object sender, RoutedEventArgs e)
         {
             if (!_isFullPlayerOpen)
             {
-                FullTrackTitle.Text = MiniTrackTitle.Text;
-                FullTrackArtist.Text = MiniTrackArtist.Text;
-                FullAlbumArt.Source = MiniAlbumArt.Source;
-
                 FullPlayerPanel.Visibility = Visibility.Visible;
                 MiniPlayerPanel.Visibility = Visibility.Collapsed;
                 _isFullPlayerOpen = true;
@@ -154,9 +144,19 @@ namespace Frantic
 
         private void FullPlayerPanel_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            FullPlayerPanel.Visibility = Visibility.Collapsed;
-            MiniPlayerPanel.Visibility = Visibility.Visible;
-            _isFullPlayerOpen = false;
+            var originalSource = e.OriginalSource as FrameworkElement;
+            if (originalSource == null) return;
+
+            string name = originalSource.Name;
+            if (name != "FullPlayButton" &&
+                name != "ProgressSlider" &&
+                !(originalSource is Button) &&
+                !(originalSource is Slider))
+            {
+                FullPlayerPanel.Visibility = Visibility.Collapsed;
+                MiniPlayerPanel.Visibility = Visibility.Visible;
+                _isFullPlayerOpen = false;
+            }
         }
 
         private void MediaButton_Click(object sender, RoutedEventArgs e)
@@ -167,7 +167,6 @@ namespace Frantic
                 case "PlayPause":
                     TogglePlayback();
                     break;
-
                 case "Prev":
                     if (_currentIndex > 0)
                     {
@@ -175,7 +174,6 @@ namespace Frantic
                         PlayTrack(_tracks[_currentIndex]);
                     }
                     break;
-
                 case "Next":
                     if (_currentIndex < _tracks.Count - 1)
                     {
@@ -184,6 +182,48 @@ namespace Frantic
                     }
                     break;
             }
+        }
+
+        private DispatcherTimer _positionTimer;
+
+        private void StartPositionTimer()
+        {
+            _positionTimer?.Stop();
+            _positionTimer = new DispatcherTimer();
+            _positionTimer.Interval = TimeSpan.FromMilliseconds(500);
+            _positionTimer.Tick += (s, e) =>
+            {
+                var session = mediaPlayer.MediaPlayer.PlaybackSession;
+                if (session?.NaturalDuration > TimeSpan.Zero)
+                {
+                    ProgressSlider.Maximum = session.NaturalDuration.TotalSeconds;
+                    TotalTimeText.Text = FormatTime(session.NaturalDuration);
+                    if (!_userIsSeeking)
+                    {
+                        ProgressSlider.Value = session.Position.TotalSeconds;
+                        CurrentTimeText.Text = FormatTime(session.Position);
+                    }
+                }
+            };
+            _positionTimer.Start();
+        }
+
+        private string FormatTime(TimeSpan t) => $"{(int)t.TotalMinutes}:{t.Seconds:D2}";
+
+        private void ProgressSlider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            if (_userIsSeeking) return;
+            var session = mediaPlayer.MediaPlayer.PlaybackSession;
+            if (session != null && session.NaturalDuration > TimeSpan.Zero)
+            {
+                session.Position = TimeSpan.FromSeconds(e.NewValue);
+            }
+        }
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            FullPlayerPanel.Visibility = Visibility.Collapsed;
+            MiniPlayerPanel.Visibility = Visibility.Visible;
+            _isFullPlayerOpen = false;
         }
 
         public void Album_ItemClick(object sender, ItemClickEventArgs e) { }

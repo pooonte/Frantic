@@ -131,9 +131,6 @@
     <Compile Include="PhotoViewPage.xaml.cs">
       <DependentUpon>PhotoViewPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PlayerViewPage.xaml.cs">
-      <DependentUpon>PlayerViewPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="tracks.xaml.cs">
       <DependentUpon>tracks.xaml</DependentUpon>
@@ -179,10 +176,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PhotoViewPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="PlayerViewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
