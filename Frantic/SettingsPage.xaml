@@ -23,14 +23,16 @@
                    PanePlacement="Left"
                    DisplayMode="Overlay"
                    IsPaneOpen="False"
-                   OpenPaneLength="200">
+                   OpenPaneLength="200 ">
             <SplitView.Pane>
-                <StackPanel x:Name="ColorsContainer" Background="#18171C">
-                    <TextBlock Text="Цвета панели"
+                <ScrollViewer>
+                    <StackPanel x:Name="ColorsContainer" Background="#18171C">
+                        <TextBlock Text="Цвета панели"
                                FontSize="18"
                                Foreground="White"
                                Margin="16,16,0,16"/>
-                </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
             </SplitView.Pane>
             <Grid>
                 <TextBlock Text="Настройки" FontSize="24" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>

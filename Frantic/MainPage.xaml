@@ -9,10 +9,10 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <SplitView x:Name="MyPane" DisplayMode="Overlay" PanePlacement="Right" Background="Transparent">
+        <SplitView x:Name="MyPane" DisplayMode="Overlay" PanePlacement="Right" Background="Transparent" OpenPaneLength="200 ">
             <SplitView.Pane>
                 <StackPanel x:Name="NavPanel" Padding="20,15,0,0" Background="#18171C">
-                    <TextBlock Text="Панель навигации" FontSize="22" VerticalAlignment="Stretch"/>
+                    <TextBlock Text="Навигация" FontSize="22" VerticalAlignment="Stretch"/>
                     <Button Content="Музыка" Tag="tracks" Click="NavButton_Click" Foreground="White" HorizontalAlignment="Left" FontSize="18" Background="Transparent" BorderThickness="0" Padding="8" Margin="15,15,0,0"/>
                     <Button Content="Видео" Tag="video" Click="NavButton_Click" Foreground="White" HorizontalAlignment="Left" FontSize="18" Background="Transparent" BorderThickness="0" Padding="8" Margin="15,0,0,0"/>
                     <Button Content="Фото" Tag="photo" Click="NavButton_Click" Foreground="White" HorizontalAlignment="Left" FontSize="18" Background="Transparent" BorderThickness="0" Padding="8" Margin="15,0,0,0"/>
