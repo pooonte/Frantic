@@ -21,7 +21,7 @@ namespace Frantic
             switch (tag)
             {
                 case "tracks":
-                    ContentFrame.Navigate(typeof(tracks));
+                    ContentFrame.Navigate(typeof(MainLibraryPage));
                     break;
                 case "video":
                     ContentFrame.Navigate(typeof(video));
