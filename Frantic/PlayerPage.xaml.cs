@@ -5,9 +5,61 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.Media.Playback;
+using System.Threading.Tasks;
+using Windows.Storage.FileProperties;
 
 namespace Frantic
 {
+    public class MusicInfo
+    {
+        public string Title { get; set; }
+        public string Artist { get; set; }
+        public string Album { get; set; }
+        public uint TrackNumber { get; set; }
+        public TimeSpan Duration { get; set; }
+        public string FilePath { get; set; }
+        public StorageFile File { get; set; }
+    }
+
+    // Класс для получения метаданных
+    public static class MusicTagHelper
+    {
+        public static async Task<MusicInfo> GetMusicInfo(StorageFile file)
+        {
+            try
+            {
+                var musicProperties = await file.Properties.GetMusicPropertiesAsync();
+
+                return new MusicInfo
+                {
+                    Title = !string.IsNullOrEmpty(musicProperties.Title)
+                           ? musicProperties.Title
+                           : System.IO.Path.GetFileNameWithoutExtension(file.Name),
+
+                    Artist = !string.IsNullOrEmpty(musicProperties.Artist)
+                            ? musicProperties.Artist
+                            : "Неизвестный исполнитель",
+
+                    Album = musicProperties.Album ?? "Неизвестный альбом",
+                    TrackNumber = musicProperties.TrackNumber,
+                    Duration = musicProperties.Duration,
+                    FilePath = file.Path,
+                    File = file
+                };
+            }
+            catch
+            {
+                return new MusicInfo
+                {
+                    Title = System.IO.Path.GetFileNameWithoutExtension(file.Name),
+                    Artist = "Неизвестный исполнитель",
+                    Album = "Неизвестный альбом",
+                    FilePath = file.Path,
+                    File = file
+                };
+            }
+        }
+    }
     public sealed partial class PlayerPage : Page
     {
         private DispatcherTimer _positionTimer;
@@ -44,47 +96,7 @@ namespace Frantic
             _positionTimer?.Stop();
         }
 
-        private async void LoadCurrentTrackInfo()
-        {
-            var file = MediaPlayerSingleton.CurrentFile;
-            if (file == null) return;
 
-            try
-            {
-                FullTrackTitle.Text = file.DisplayName;
-                FullTrackArtist.Text = "Локальный трек";
-
-                try
-                {
-                    var props = await file.Properties.RetrievePropertiesAsync(
-                        new[] { "System.Music.Title", "System.Music.Artist" });
-                    if (props["System.Music.Title"] is string title && !string.IsNullOrWhiteSpace(title))
-                        FullTrackTitle.Text = title;
-                    if (props["System.Music.Artist"] is string artist && !string.IsNullOrWhiteSpace(artist))
-                        FullTrackArtist.Text = artist;
-                }
-                catch { }
-
-                try
-                {
-                    var thumb = await file.GetThumbnailAsync(
-                        Windows.Storage.FileProperties.ThumbnailMode.MusicView, 256);
-                    if (thumb != null && thumb.Size > 0)
-                    {
-                        var bitmap = new BitmapImage();
-                        await bitmap.SetSourceAsync(thumb);
-                        FullAlbumArt.Source = bitmap;
-                    }
-                }
-                catch { }
-
-                UpdatePlayButtonState();
-            }
-            catch (Exception ex)
-            {
-                await new Windows.UI.Popups.MessageDialog($"Ошибка: {ex.Message}").ShowAsync();
-            }
-        }
 
         private void UpdatePlayButtonState()
         {
@@ -153,6 +165,81 @@ namespace Frantic
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             Frame.GoBack();
+        }
+        private async void LoadCurrentTrackInfo()
+        {
+            var file = MediaPlayerSingleton.CurrentFile;
+            if (file == null) return;
+
+            try
+            {
+                // Получаем информацию о треке через MusicTagHelper
+                var musicInfo = await MusicTagHelper.GetMusicInfo(file);
+
+                // Обновляем UI
+                FullTrackTitle.Text = musicInfo.Title;
+                FullTrackArtist.Text = musicInfo.Artist;
+
+                // Показываем дополнительную информацию, если есть
+                if (!string.IsNullOrEmpty(musicInfo.Album) && musicInfo.Album != "Неизвестный альбом")
+                {
+                    // Можно добавить отображение альбома, если нужно
+                }
+
+                // Загружаем обложку альбома
+                await LoadAlbumArt(file);
+
+                UpdatePlayButtonState();
+            }
+            catch (Exception ex)
+            {
+                // Fallback на старый метод, если новый не работает
+                try
+                {
+                    FullTrackTitle.Text = file.DisplayName;
+                    FullTrackArtist.Text = "Локальный трек";
+
+                    var props = await file.Properties.RetrievePropertiesAsync(
+                        new[] { "System.Music.Title", "System.Music.Artist" });
+                    if (props["System.Music.Title"] is string title && !string.IsNullOrWhiteSpace(title))
+                        FullTrackTitle.Text = title;
+                    if (props["System.Music.Artist"] is string artist && !string.IsNullOrWhiteSpace(artist))
+                        FullTrackArtist.Text = artist;
+                }
+                catch
+                {
+                    FullTrackTitle.Text = System.IO.Path.GetFileNameWithoutExtension(file.Name);
+                    FullTrackArtist.Text = "Неизвестный исполнитель";
+                }
+            }
+        }
+        private async Task LoadAlbumArt(StorageFile file)
+        {
+            try
+            {
+                // Первый способ: через thumbnail
+                var thumbnail = await file.GetThumbnailAsync(
+                    Windows.Storage.FileProperties.ThumbnailMode.MusicView,
+                    256,
+                    Windows.Storage.FileProperties.ThumbnailOptions.UseCurrentScale);
+
+                if (thumbnail != null && thumbnail.Size > 0)
+                {
+                    var bitmap = new BitmapImage();
+                    await bitmap.SetSourceAsync(thumbnail);
+                    FullAlbumArt.Source = bitmap;
+                    return;
+                }
+            }
+            catch
+            {
+                // Можно установить обложку по умолчанию
+                try
+                {
+                    FullAlbumArt.Source = new BitmapImage(new Uri("ms-appx:///Assets/DefaultAlbum.png"));
+                }
+                catch { }
+            }
         }
     }
 }
